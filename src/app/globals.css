@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Quicksand', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #fff0f5; /* Lavender blush / pastel pink background */
+  color: #4a4a4a;
+}
+
+/* Cute Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #fff0f5;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #fbcfe8; /* pink-200 */
+  border-radius: 10px;
+  border: 2px solid #fff0f5;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #f472b6; /* pink-400 */
+}
+
+/* Custom scrollbar for small horizontal tables */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #fbcfe8;
+  border-radius: 4px;
+}

@@ -1,0 +1,33 @@
+{
+  "name": "princess-house-baby",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "seed:orders": "node scripts/seed-sample-orders.mjs"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^17.3.1",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^8.23.0",
+    "next": "^16.2.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^16.2.1",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3"
+  }
+}
