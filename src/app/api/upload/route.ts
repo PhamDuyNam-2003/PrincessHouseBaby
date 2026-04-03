@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import cloudinary from '@/lib/cloudinary';
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     const formData = await req.formData();
     const file = formData.get('file') as File;
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    return new Promise<NextResponse>((resolve, reject) => {
+    const cloudinaryResponse = await new Promise<NextResponse>((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder: 'princess-house-baby', // Tên thư mục trên Cloudinary
@@ -30,6 +30,8 @@ export async function POST(req: NextRequest) {
 
       uploadStream.end(buffer);
     });
+
+    return cloudinaryResponse;
   } catch (error) {
     console.error('API Error:', error);
     return NextResponse.json({ error: 'Lỗi hệ thống' }, { status: 500 });
