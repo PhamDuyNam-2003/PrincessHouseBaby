@@ -6,6 +6,8 @@ import { Category } from '@/models/Category';
 export async function GET(request: NextRequest) {
   try {
     await connectDB();
+    // Đảm bảo model Category được đăng ký trước khi populate
+    void Category;
     
     const searchParams = request.nextUrl.searchParams;
     const search = searchParams.get('search') || '';

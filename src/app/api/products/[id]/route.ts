@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import { Product } from '@/models/Product';
+import { Category } from '@/models/Category';
 
 export async function GET(
   request: NextRequest,
@@ -9,6 +10,8 @@ export async function GET(
   try {
     const { id } = await params;
     await connectDB();
+    // Đảm bảo model Category được đăng ký trước khi populate
+    void Category;
     
     const product = await Product.findById(id).populate('CategoryID');
     
