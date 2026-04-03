@@ -16,7 +16,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "./dist",
-    "composite": true,
+    "composite": false,
     "removeComments": true,
     "noEmit": true,
     "strict": true,
