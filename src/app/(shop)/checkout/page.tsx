@@ -434,19 +434,26 @@ export default function CheckoutPage() {
                   
                   {/* Hướng dẫn chuyển khoản */}
                   {formData.PaymentMethod === 'transfer' && (
-                    <div className="mt-3 bg-pink-50 border-2 border-pink-200 rounded-2xl p-4 flex flex-col md:flex-row items-center gap-4 animate-fade-in">
-                      <div className="w-24 h-24 bg-white rounded-xl shadow p-2 flex shrink-0 items-center justify-center border-2 border-pink-200">
-                        {/* Fake QR code using cute emojis */}
-                        <div className="text-center">
-                           <span className="text-4xl text-pink-500 leading-none block font-mono font-black border-4 border-black p-1">QR</span>
-                        </div>
+                    <div className="mt-3 bg-pink-50 border-2 border-pink-200 rounded-3xl p-5 flex flex-col md:flex-row items-center gap-6 animate-fade-in shadow-[0_10px_25px_rgba(236,72,153,0.1)]">
+                      <div className="w-32 h-32 bg-white rounded-2xl shadow-md p-1.5 flex shrink-0 items-center justify-center border-2 border-pink-200 overflow-hidden group hover:scale-105 transition-transform duration-300">
+                        <img 
+                          src="https://res.cloudinary.com/dil3cfvtb/image/upload/v1775062787/princess-house-baby/hu72s9pl4zpdfqf2l0ea.jpg" 
+                          alt="QR Chuyển khoản"
+                          className="w-full h-full object-contain rounded-lg"
+                        />
                       </div>
-                      <div className="text-sm text-gray-700 text-left">
-                        <p className="font-bold text-pink-600 mb-1">Cú pháp chuyển: <span className="bg-pink-100 px-2 rounded font-mono">TênBé SốĐT</span></p>
-                        <p>Ngân hàng: <strong>MB Bank (Quân Đội)</strong></p>
-                        <p>Số tài khoản: <strong className="text-lg text-purple-600">8888 9999</strong></p>
-                        <p>Chủ TK: <strong>CONG CHUA SHOP</strong></p>
-                        <p className="text-xs text-pink-500 mt-1 italic">*Tụi mình sẽ liên hệ xác nhận sau khi nhận được nè! 💕</p>
+                      <div className="text-sm text-gray-700 text-left flex-1">
+                        <p className="font-bold text-pink-600 mb-2 flex items-center gap-2">
+                          <span className="bg-pink-100 p-1 rounded-md text-base">📝</span>
+                          Nội dung: <span className="bg-pink-100 px-2.5 py-0.5 rounded-full font-mono text-pink-700 border border-pink-200">TênBé SốĐT</span>
+                        </p>
+                        <div className="space-y-1.5 border-l-4 border-pink-200 pl-4 py-1">
+                          <p className="flex items-center gap-2">🏦 Ngân hàng: <strong className="text-purple-700">BIDV</strong></p>
+                          <p className="flex items-center gap-2 underline decoration-pink-300 decoration-2 underline-offset-4">💳 Số tài khoản: <strong className="text-lg text-pink-600 select-all">2123973886</strong></p>
+                          <p className="flex items-center gap-2">👤 Chủ TK: <strong className="uppercase">PHAM THI BICH NGOC</strong></p>
+                          <p className="text-[10px] text-gray-400 font-medium">Chi nhánh: Tây Hồ</p>
+                        </div>
+                        <p className="text-xs text-pink-500 mt-2 italic font-bold">✨ Quét mã QR để tự động nhập thông tin nè! ✨</p>
                       </div>
                     </div>
                   )}

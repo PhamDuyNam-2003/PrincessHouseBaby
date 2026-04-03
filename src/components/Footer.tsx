@@ -9,9 +9,19 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Company Info */}
           <div>
-            <h3 className="text-xl font-black text-pink-600 mb-4 flex items-center gap-2">
-              👑 Princess House 
-            </h3>
+            <div className="flex items-center gap-3 mb-4 group">
+              <img 
+                src="https://res.cloudinary.com/dil3cfvtb/image/upload/v1775063743/avt_qlvii1.jpg" 
+                alt="Princess House Logo" 
+                className="w-10 h-10 rounded-full border-2 border-pink-300 shadow-sm object-cover group-hover:scale-110 transition-transform"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150?text=PH';
+                }}
+              />
+              <h3 className="text-xl font-black text-pink-600">
+                Princess House 🎀
+              </h3>
+            </div>
             <p className="text-pink-600/80 font-medium leading-relaxed">
               Thế giới kẹp tóc siêu xinh xắn dành riêng cho các nàng công chúa nhỏ! 🎀 Hàng xịn xò, giá hạt dẻ, bé nào cũng mê tít. 💕
             </p>

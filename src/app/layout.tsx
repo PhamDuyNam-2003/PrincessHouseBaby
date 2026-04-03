@@ -14,6 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi">
+      <head>
+        <link rel="icon" href="https://res.cloudinary.com/dil3cfvtb/image/upload/v1775063743/avt_qlvii1.jpg" />
+      </head>
       <body className="bg-white text-gray-900">
         <CartProvider>{children}</CartProvider>
       </body>

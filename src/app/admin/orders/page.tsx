@@ -886,18 +886,25 @@ export default function AdminOrders() {
             <div className="bg-gradient-to-r from-pink-400 to-purple-400 px-6 py-5 flex justify-between items-center text-white relative overflow-hidden">
               <div className="absolute -right-4 -top-4 text-7xl opacity-20 rotate-12">🌸</div>
               <h2 className="text-xl font-extrabold flex items-center gap-2 relative z-10">🎀 Khách hàng iu</h2>
-              <button onClick={() => setViewingCustomerOrder(null)} className="text-white hover:text-pink-200 font-bold text-3xl transition-colors hover:scale-110 relative z-10">&times;</button>
+              <button 
+                onClick={() => setViewingCustomerOrder(null)} 
+                className="text-white hover:text-pink-200 font-bold text-3xl transition-colors hover:scale-110 relative z-10"
+              >
+                ×
+              </button>
             </div>
             
             <div className="p-6 space-y-5 relative bg-white">
               {(() => {
                 const order = viewingCustomerOrder;
                 const custRef = customers.find(c => c._id === order.CustomerId);
-                // Also check customers.find with specific ids to prevent key issues where order.CustomerId is used improperly.
+                
+                // Giải thích: Ưu tiên lấy thông tin từ Đơn hàng (Order) trước, 
+                // vì đây là thông tin khách nhập lúc mua. Nếu trống mới lấy từ Profile khách hàng.
                 const name = order.CustomerDisplayName || (custRef && custRef.CustomerName) || 'Khách vãng lai';
-                const phone = order.Phone || order.CustomerPhone || (order as any).PhoneNumber || ((order as any).customer && (order as any).customer.phone) || (custRef && (custRef.Phone || custRef.PhoneNumber)) || 'Không có';
+                const phone = order.Phone || order.CustomerPhone || (custRef && (custRef.Phone || custRef.PhoneNumber)) || 'Không có';
                 const email = order.Email || (custRef && custRef.Email) || 'Không xác định';
-                const address = (custRef ? [custRef.Address, custRef.WardName, custRef.DistrictName, custRef.ProvinceName].filter(Boolean).join(', ') : order.Address) || 'Chưa cung cấp địa chỉ';
+                const address = order.Address || (custRef ? [custRef.Address, custRef.WardName, custRef.DistrictName, custRef.ProvinceName].filter(Boolean).join(', ') : '') || 'Chưa cung cấp địa chỉ';
 
                 return (
                   <div className="space-y-4">

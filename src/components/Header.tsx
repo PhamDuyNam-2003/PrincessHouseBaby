@@ -58,9 +58,20 @@ export default function Header({ onCategoryChange }: HeaderProps) {
     <header className="bg-gradient-to-r from-pink-100 via-white to-pink-100 shadow-sm sticky top-0 z-40 border-b-2 border-pink-200">
       <div className="container mx-auto px-4 py-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2 cursor-pointer transition-transform hover:scale-105 active:scale-95">
-            <h1 className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500 drop-shadow-sm flex items-center gap-2">
-              👑 Princess House 🎀
+          <Link href="/" className="flex items-center gap-3 cursor-pointer transition-transform hover:scale-105 active:scale-95 group">
+            <div className="relative w-12 h-12 md:w-14 md:h-14">
+              <img 
+                src="https://res.cloudinary.com/dil3cfvtb/image/upload/v1775063743/avt_qlvii1.jpg" 
+                alt="Princess House Logo" 
+                className="w-full h-full rounded-full border-2 border-pink-300 shadow-md object-cover group-hover:border-pink-400 transition-colors"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150?text=PH';
+                }}
+              />
+              <span className="absolute -bottom-1 -right-1 text-lg">🎀</span>
+            </div>
+            <h1 className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500 drop-shadow-sm">
+              Princess House
             </h1>
           </Link>
 

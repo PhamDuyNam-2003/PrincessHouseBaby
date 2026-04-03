@@ -27,6 +27,7 @@ export default function AdminProducts() {
     Description: '',
     variants: [{ ...defaultVariant }],
   });
+  const [uploadingIdx, setUploadingIdx] = useState<number | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -415,49 +416,40 @@ export default function AdminProducts() {
                          <label className="text-xs font-bold text-pink-400">Ảnh kẹp tóc 🖼️ (Tải ảnh lên)</label>
                          <div className="flex gap-2 items-center">
                            <label className="cursor-pointer bg-white border-2 border-pink-200 hover:border-pink-400 text-pink-600 text-sm font-bold py-1.5 px-3 rounded-lg shadow-sm transition-colors text-center inline-block">
-                             Tải ảnh 📷
+                             {uploadingIdx === idx ? 'Đang tải...' : 'Tải ảnh 📷'}
                              <input 
                                type="file" 
                                accept="image/*" 
                                className="hidden" 
-                               onChange={(e) => {
-                                 const file = e.target.files?.[0];
-                                 if (!file) return;
-                                 
-                                 const reader = new FileReader();
-                                 reader.onloadend = () => {
-                                   const img = new Image();
-                                   img.src = reader.result as string;
-                                   img.onload = () => {
-                                     const canvas = document.createElement('canvas');
-                                     let width = img.width;
-                                     let height = img.height;
-                                     const MAX_SIZE = 800; // Resize to max 800px
-
-                                     if (width > height && width > MAX_SIZE) {
-                                       height *= MAX_SIZE / width;
-                                       width = MAX_SIZE;
-                                     } else if (height > MAX_SIZE) {
-                                       width *= MAX_SIZE / height;
-                                       height = MAX_SIZE;
-                                     }
-
-                                     canvas.width = width;
-                                     canvas.height = height;
-                                     const ctx = canvas.getContext('2d');
-                                     if (ctx) {
-                                       ctx.drawImage(img, 0, 0, width, height);
-                                       // Export as WebP to save much more space!
-                                       const base64String = canvas.toDataURL('image/webp', 0.8);
-                                       
-                                       const next = [...form.variants];
-                                       next[idx] = { ...next[idx], ImageURL: base64String };
-                                       setForm((f) => ({ ...f, variants: next }));
-                                     }
-                                   };
-                                 };
-                                 reader.readAsDataURL(file);
-                               }}
+                               onChange={async (e) => {
+                                  const file = e.target.files?.[0];
+                                  if (!file) return;
+                                  
+                                  setUploadingIdx(idx);
+                                  try {
+                                    const formData = new FormData();
+                                    formData.append('file', file);
+                                    
+                                    const res = await fetch('/api/upload', {
+                                      method: 'POST',
+                                      body: formData,
+                                    });
+                                    
+                                    if (!res.ok) {
+                                      throw new Error('Upload failed');
+                                    }
+                                    
+                                    const data = await res.json();
+                                    const next = [...form.variants];
+                                    next[idx] = { ...next[idx], ImageURL: data.url };
+                                    setForm((f) => ({ ...f, variants: next }));
+                                  } catch (err) {
+                                    console.error(err);
+                                    alert('Tải ảnh thất bại. Thử lại sau nhé!');
+                                  } finally {
+                                    setUploadingIdx(null);
+                                  }
+                                }}
                              />
                            </label>
                            <span className="text-xs text-gray-400 italic">...hoặc dán Link URL</span>

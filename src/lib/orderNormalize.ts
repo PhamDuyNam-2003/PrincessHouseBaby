@@ -14,6 +14,9 @@ export type AdminOrderRow = {
   OrderNumber: string;
   CustomerDisplayName: string;
   CustomerPhone: string;
+  Email?: string;
+  Phone?: string;
+  Address?: string;
   TotalAmount: number;
   Status: string;
   createdAt?: string;
@@ -112,6 +115,9 @@ export function normalizeOrderDoc(
     OrderNumber: orderNumber,
     CustomerDisplayName,
     CustomerPhone,
+    Email: String(doc.Email ?? doc.email ?? ''),
+    Phone: String(doc.Phone ?? doc.phone ?? ''),
+    Address: String(doc.Address ?? doc.address ?? ''),
     TotalAmount: Number(total) || 0,
     Status: String(status),
     createdAt,
