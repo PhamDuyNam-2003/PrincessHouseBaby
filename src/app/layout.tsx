@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
+import ChatWidget from "@/components/ChatWidget";
 
 export const metadata: Metadata = {
   title: "Princess House Baby",
@@ -18,7 +19,10 @@ export default function RootLayout({
         <link rel="icon" href="https://res.cloudinary.com/dil3cfvtb/image/upload/v1775063743/avt_qlvii1.jpg" />
       </head>
       <body className="bg-white text-gray-900">
-        <CartProvider>{children}</CartProvider>
+        <CartProvider>
+          {children}
+          <ChatWidget />
+        </CartProvider>
       </body>
     </html>
   );

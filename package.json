@@ -10,6 +10,7 @@
     "seed:orders": "node scripts/seed-sample-orders.mjs"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "axios": "^1.6.0",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.9.0",
