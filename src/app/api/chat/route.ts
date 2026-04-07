@@ -4,7 +4,6 @@ import { connectDB } from '@/lib/mongodb';
 import { Product } from '@/models/Product';
 import { Category } from '@/models/Category';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 // Cache sản phẩm 5 phút để không query DB mỗi lần chat
 let cachedProducts: string | null = null;
@@ -83,18 +82,24 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
-    if (!process.env.GEMINI_API_KEY) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
       return NextResponse.json(
         { error: 'Chưa cấu hình GEMINI_API_KEY' },
         { status: 500 }
       );
     }
 
+    // Khởi tạo ở đây để đảm bảo lấy đúng key mới nhất từ env
+    const genAI = new GoogleGenerativeAI(apiKey);
+
     const productCatalog = await getProductCatalog();
+    console.log('Product Catalog length:', productCatalog.length, 'characters');
+    
     const systemPrompt = buildSystemPrompt(productCatalog);
 
     const model = genAI.getGenerativeModel({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-pro-latest', 
       systemInstruction: systemPrompt,
     });
 
@@ -108,10 +113,26 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ reply: text }, { status: 200 });
   } catch (error: any) {
-    console.error('Chat API error:', error);
+    console.error('Chat API error detailed:', error);
+    
+    // Xử lý các lỗi phổ biến từ Gemini API
+    if (error.status === 429) {
+      return NextResponse.json(
+        { reply: 'Bot đang hơi bận vì quá nhiều người hỏi (Hết quota), bạn thử lại sau chút nhé! 🌸' },
+        { status: 200 }
+      );
+    }
+    
+    if (error.status === 404) {
+      return NextResponse.json(
+        { reply: 'Bot đang bảo trì model (Lỗi 404), mình sẽ quay lại sớm! 🎀' },
+        { status: 200 }
+      );
+    }
+
     return NextResponse.json(
-      { error: error.message || 'Lỗi hệ thống' },
-      { status: 500 }
+      { reply: 'Hệ thống đang bận một chút, bạn thử lại sau nhen! 🥲' },
+      { status: 200 } // Trả về 200 để chatbot không báo lỗi đỏ
     );
   }
 }
