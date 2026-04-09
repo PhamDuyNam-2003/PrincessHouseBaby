@@ -26,7 +26,7 @@ async function getProductCatalog(): Promise<string> {
         const variants = (p.variants || [])
           .map(
             (v: any) =>
-              `  - ${v.variantName}: ${v.Price?.toLocaleString('vi-VN')}đ (còn ${v.StockQuantity} sp)`
+              `  - ${v.variantName}: Lẻ: ${v.Price?.toLocaleString('vi-VN')}đ | Sỉ 50: ${v.Price50?.toLocaleString('vi-VN')}đ | Sỉ 100: ${v.Price100?.toLocaleString('vi-VN')}đ (còn ${v.StockQuantity})`
           )
           .join('\n');
         const category = p.CategoryID?.CategoryName || 'Chưa phân loại';
@@ -49,10 +49,9 @@ function buildSystemPrompt(productCatalog: string): string {
 ## Nguyên tắc trả lời:
 - Luôn trả lời bằng **tiếng Việt**, giọng thân thiện, dễ thương, có emoji
 - Trả lời **ngắn gọn** (tối đa 3-4 câu), đúng trọng tâm
-- Nếu khách hỏi sản phẩm, hãy gợi ý từ danh sách bên dưới với giá chính xác
+- Báo giá tuỳ theo số lượng dựa vào danh sách bên dưới (Lẻ cho <50 sp, Sỉ 50 cho 50-99 sp, Sỉ 100 cho >=100 sp). Hệ thống sẽ tự tính tiền ở giỏ hàng.
 - Nếu khách hỏi ngoài phạm vi shop, nhẹ nhàng hướng về sản phẩm của shop
-- Khi gợi ý sản phẩm, luôn kèm giá tiền
-- Khuyến khích khách đặt hàng bằng cách nhấn nút "Đặt Mua Ngay" trên trang sản phẩm
+- Khuyến khích khách đưa vào giỏ hàng và chỉnh số lượng để thấy giá sỉ.
 
 ## Danh sách sản phẩm hiện có:
 ${productCatalog}
@@ -95,16 +94,20 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const productCatalog = await getProductCatalog();
     console.log('Product Catalog length:', productCatalog.length, 'characters');
-    
+
     const systemPrompt = buildSystemPrompt(productCatalog);
 
+    // Sử dụng model 1.5-flash để hỗ trợ systemInstruction tốt hơn và tốc độ nhanh hơn
     const model = genAI.getGenerativeModel({
-      model: 'gemini-pro-latest', 
+      model: 'gemini-2.5-flash',
       systemInstruction: systemPrompt,
     });
 
+    // Giới hạn history 10 tin nhắn gần nhất để tránh bị lỗi 429 Hết quota
+    const trimmedHistory = (history || []).slice(-10);
+
     const chat = model.startChat({
-      history: history || [],
+      history: trimmedHistory,
     });
 
     const result = await chat.sendMessage(message);
@@ -114,25 +117,31 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ reply: text }, { status: 200 });
   } catch (error: any) {
     console.error('Chat API error detailed:', error);
-    
-    // Xử lý các lỗi phổ biến từ Gemini API
-    if (error.status === 429) {
+
+    // Nếu là lỗi từ Google Generative AI SDK
+    const errorMessage = error?.message || '';
+
+    if (errorMessage.includes('429') || error.status === 429) {
       return NextResponse.json(
         { reply: 'Bot đang hơi bận vì quá nhiều người hỏi (Hết quota), bạn thử lại sau chút nhé! 🌸' },
         { status: 200 }
       );
     }
-    
-    if (error.status === 404) {
+
+    if (errorMessage.includes('404') || error.status === 404) {
       return NextResponse.json(
         { reply: 'Bot đang bảo trì model (Lỗi 404), mình sẽ quay lại sớm! 🎀' },
         { status: 200 }
       );
     }
 
+    // Trường hợp lỗi API Key hoặc các lỗi server khác
     return NextResponse.json(
-      { reply: 'Hệ thống đang bận một chút, bạn thử lại sau nhen! 🥲' },
-      { status: 200 } // Trả về 200 để chatbot không báo lỗi đỏ
+      {
+        reply: 'Hệ thống đang bận một chút, bạn thử lại sau nhen! 🥲',
+        debug: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
+      { status: 200 }
     );
   }
 }

@@ -49,6 +49,9 @@ export default function AddToCartModal({
       ProductName: product.ProductName,
       variantName: selectedVariant.variantName,
       ProductPrice: selectedVariant.Price,
+      basePrice: selectedVariant.Price,
+      price50: selectedVariant.Price50,
+      price100: selectedVariant.Price100,
       ProductImage: selectedVariant.ImageURL,
       quantity: q,
     };

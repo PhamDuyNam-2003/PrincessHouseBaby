@@ -17,7 +17,10 @@ export interface CartItem {
   variantId: string;
   ProductName: string;
   variantName: string;
-  ProductPrice: number;
+  ProductPrice: number; // The effective calculated price
+  basePrice: number;
+  price50: number;
+  price100: number;
   ProductImage: string;
   quantity: number;
 }
@@ -40,28 +43,45 @@ type CartAction =
   | { type: 'CLEAR_CART' }
   | { type: 'LOAD'; payload: CartItem[] };
 
+function calculateEffectivePrice(item: Partial<CartItem>, quantity: number): number {
+  const base = item.basePrice ?? item.ProductPrice ?? 0;
+  const p50 = item.price50 ?? base;
+  const p100 = item.price100 ?? base;
+
+  if (quantity >= 100) return p100;
+  if (quantity >= 50) return p50;
+  return base;
+}
+
 function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
   switch (action.type) {
     case 'ADD_TO_CART': {
       const existing = state.find((item) => item._id === action.payload._id);
       if (existing) {
-        return state.map((item) =>
-          item._id === action.payload._id
-            ? {
-                ...item,
-                quantity: item.quantity + action.payload.quantity,
-              }
-            : item
-        );
+        return state.map((item) => {
+          if (item._id === action.payload._id) {
+            const newQuantity = item.quantity + action.payload.quantity;
+            return {
+              ...item,
+              quantity: newQuantity,
+              ProductPrice: calculateEffectivePrice(item, newQuantity),
+            };
+          }
+          return item;
+        });
       }
-      return [...state, action.payload];
+      return [...state, { ...action.payload, ProductPrice: calculateEffectivePrice(action.payload, action.payload.quantity) }];
     }
     case 'REMOVE_FROM_CART':
       return state.filter((item) => item._id !== action.payload);
     case 'UPDATE_QUANTITY':
       return state.map((item) =>
         item._id === action.payload.id
-          ? { ...item, quantity: action.payload.quantity }
+          ? { 
+              ...item, 
+              quantity: action.payload.quantity,
+              ProductPrice: calculateEffectivePrice(item, action.payload.quantity),
+            }
           : item
       );
     case 'CLEAR_CART':
