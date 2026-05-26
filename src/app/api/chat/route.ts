@@ -67,7 +67,7 @@ type ChatMessage = {
   parts: { text: string }[];
 };
 
-export async function POST(req: NextRequest): Promise<NextResponse> {
+export async function POST(req: NextRequest) {
   try {
     const { message, history } = (await req.json()) as {
       message: string;

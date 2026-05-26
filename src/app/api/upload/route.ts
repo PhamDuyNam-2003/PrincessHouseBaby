@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import cloudinary from '@/lib/cloudinary';
 
-export async function POST(req: NextRequest): Promise<NextResponse> {
+export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get('file') as File;
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const cloudinaryResponse = await new Promise<NextResponse>((resolve, reject) => {
+    const cloudinaryResponse = await new Promise<Response>((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder: 'princess-house-baby', // Tên thư mục trên Cloudinary
